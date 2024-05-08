@@ -1,3 +1,4 @@
 example/main
 example/test.ppm
 example/out.seif
+*.seif
