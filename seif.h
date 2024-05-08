@@ -66,8 +66,7 @@ typedef struct
 
 // Seif Flags
 #define SEIF_FLAG_ALPHA (1 << 0)
-#define SEIF_FLAG_META (1 << 1)		  // If not set the Header->meta data will be skipped
-#define SEIF_FLAG_COMPRESSED (1 << 2) // Indecates if the image is compressed. TODO
+#define SEIF_FLAG_COMPRESSED (1 << 1) // Indecates if the image is compressed. TODO
 
 // Seif Encoding
 #define SEIF_ENCODING_RGBA 0x01

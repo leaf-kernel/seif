@@ -80,20 +80,17 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	// printf("- Magic: \"%.4s\"\n", header->magic);
-	// printf("- Flags: ");
-	// printBinary(header->flags);
-	// printf("\n");
+	printf("- Magic: \"%.4s\"\n", header->magic);
+	printf("- Flags: ");
+	printBinary(header->flags);
+	printf("\n");
 
 	bool alpha = false;
-	bool meta = false;
 	bool compressed = false;
 
 	if (isBitSet(header->flags, 0))
 		alpha = true;
 	if (isBitSet(header->flags, 1))
-		meta = true;
-	if (isBitSet(header->flags, 2))
 		compressed = true;
 
 	if (compressed)
@@ -102,16 +99,19 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	// printf("- Alpha: %s, Meta: %s, Compressed: %s\n", alpha ? "yes" : "no",
-	// 	   meta ? "yes" : "no", compressed ? "yes" : "no");
+	printf("- Alpha: %s, Compressed: %s\n", alpha ? "yes" : "no", compressed ? "yes" : "no");
 
-	// printf("- Chunk Count: %d\n", header->chunk_count);
+	printf("- Chunk Count: %d\n", header->chunk_count);
 
 	if (header->chunk_count < 1)
 	{
 		printf("Invalid chunk count \"%d\"!\n", header->chunk_count);
 		return 1;
 	}
+
+	printf("- Signature: \"%s\"\n", header->meta.signature);
+	printf("- Width: %d\n", header->meta.width);
+	printf("- Height: %d\n", header->meta.height);
 
 	for (int c = 0; c < header->chunk_count; c++)
 	{
@@ -140,8 +140,8 @@ int main(int argc, char *argv[])
 		}
 
 		int chunk_size_full = header->chunk_size * encoding_size;
-
 		size_t offset = sizeof(SEIF_Header) + sizeof(SEIF_ChunkHeader) * header->chunk_count + (chunk_size_full * c);
+
 		uint8_t *chunk = (uint8_t *)(file_contents + offset);
 		for (int i = 0; i < chunk_size_full; i += encoding_size)
 		{

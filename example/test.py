@@ -2,23 +2,22 @@ import struct
 
 SEIF_ENCODING_RGBA = 0x01
 SEIF_FLAG_ALPHA = 1 << 0
-SEIF_FLAG_META = 1 << 1
-SEIF_FLAG_COMPRESSED = 1 << 2
+SEIF_FLAG_COMPRESSED = 1 << 1
 
 class SEIF_Meta:
     def __init__(self):
-        self.signature = b"LEAFSEIF"
+        self.signature = b"PYTHSEIF"
         self.width = 0
         self.height = 0
 
 class SEIF_Header:
     def __init__(self):
         self.magic = b"SEIF"
-        self.flags = SEIF_FLAG_ALPHA | SEIF_FLAG_META
+        self.flags = SEIF_FLAG_ALPHA
         self.encoding = SEIF_ENCODING_RGBA
         self.meta = SEIF_Meta()
-        self.chunk_count = 4
-        self.chunk_size = 4 * 4
+        self.chunk_count = 1
+        self.chunk_size = 128*128
 
 class SEIF_ChunkHeader:
     def __init__(self, i):
@@ -35,7 +34,7 @@ def write_chunk(file, chunk_header):
     file.write(struct.pack('I', chunk_header.idx))
     
     encoding_size = 4   # RGBA
-    for _ in range((4*4) * encoding_size):
+    for _ in range((128*128) * encoding_size):
         file.write(struct.pack('B', 255))
 
 def generate_seif_file(filename):
