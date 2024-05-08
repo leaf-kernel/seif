@@ -42,6 +42,7 @@ typedef struct {
 	u8 magic[4];	// "SEIF".
 	u8 flags;		// SIEF_FLAG_X ored together.	
 	u8 encoding;	// RGBA, RGB, ARGB, etc.
+	u8 encoding_size;
 	SEIF_Meta meta;	// Meta data (signature, etc.).
 	// Chunk Info
 	u32 chunk_count;
@@ -80,7 +81,7 @@ typedef struct {
 //   [FIRST CHUNK]
 //   	- [HEADER]:
 //   		- idx: 1
-//   	- [data]
+//   	- [data]: The data can be represented in code as `uint8_t data[chunk_size * encoding_size]`. Both gathered from the header 
 // 
 // Chunks are layed out like this on the image:
 // 
