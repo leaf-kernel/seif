@@ -82,13 +82,23 @@ typedef struct {
 //   		- idx: 1
 //   	- [data]
 // 
-// Chunks are layed out like this:
+// Chunks are layed out like this on the image:
 // 
 // 	 1  |  2  |  3
 //  --------------
 //   4  |  5  |  6
 //  --------------
 //   7  |  8  |  9
+//
+//   The data in the chunks are layed out from "left -> right" so a chunk would look like this in the image:
+//   ______________
+//  | 1 2 3 4 ... |
+//  |             |
+//  |             |
+//  |			  |
+//  |_____________|
+//
+// 1 being some data and so on.
 
 
 #endif // __SEIF_H__
