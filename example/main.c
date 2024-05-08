@@ -10,22 +10,6 @@
 		printf("%d", (n >> i) & 1);
 #define isBitSet(num, n) ((num) & (1 << (n)))
 
-void put_pixel(int r, int g, int b)
-{
-// ANSI color escape codes
-#define ANSI_COLOR_RESET "\x1b[0m"
-#define ANSI_COLOR_BG(r, g, b) "\x1b[48;2;" #r ";" #g ";" #b "m"
-
-	// Set background color
-	printf(ANSI_COLOR_BG(% d, % d, % d), r, g, b);
-
-	// Draw dot (represented by a single character)
-	printf(".");
-
-	// Reset colors
-	printf(ANSI_COLOR_RESET);
-}
-
 int main(int argc, char *argv[])
 {
 	FILE *file_ptr;
@@ -80,10 +64,10 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	printf("- Magic: \"%.4s\"\n", header->magic);
-	printf("- Flags: ");
-	printBinary(header->flags);
-	printf("\n");
+	// printf("- Magic: \"%.4s\"\n", header->magic);
+	// printf("- Flags: ");
+	// printBinary(header->flags);
+	// printf("\n");
 
 	bool alpha = false;
 	bool compressed = false;
@@ -99,9 +83,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	printf("- Alpha: %s, Compressed: %s\n", alpha ? "yes" : "no", compressed ? "yes" : "no");
+	// printf("- Alpha: %s, Compressed: %s\n", alpha ? "yes" : "no", compressed ? "yes" : "no");
 
-	printf("- Chunk Count: %d\n", header->chunk_count);
+	// printf("- Chunk Count: %d\n", header->chunk_count);
 
 	if (header->chunk_count < 1)
 	{
@@ -109,18 +93,22 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	printf("- Signature: \"%s\"\n", header->meta.signature);
-	printf("- Width: %d\n", header->meta.width);
-	printf("- Height: %d\n", header->meta.height);
+	// printf("- Signature: \"%s\"\n", header->meta.signature);
+	// printf("- Width: %d\n", header->meta.width);
+	// printf("- Height: %d\n", header->meta.height);
+
+	printf("P3\n");
+	printf("%d %d\n", header->meta.width, header->meta.height);
+	printf("255\n");
 
 	for (int c = 0; c < header->chunk_count; c++)
 	{
-		printf("-------- Chunk %d --------\n", c + 1);
+		// printf("-------- Chunk %d --------\n", c + 1);
 		SEIF_ChunkHeader *chunk_header = (SEIF_ChunkHeader *)(file_contents + sizeof(SEIF_Header) + (c * sizeof(SEIF_ChunkHeader)));
 
 		if (chunk_header == NULL)
 		{
-			printf("Didnt find the chunk header for chunk %d!\n", c);
+			// printf("Didnt find the chunk header for chunk %d!\n", c);
 			return 1;
 		}
 
@@ -167,7 +155,8 @@ int main(int argc, char *argv[])
 				b = chunk[i + 3];
 			}
 
-			printf("%d: R = %d, G = %d, B = %d, A = %d\n", i / encoding_size, r, g, b, a);
+			// printf("%d: R = %d, G = %d, B = %d, A = %d\n", i / encoding_size, r, g, b, a);
+			printf("%d %d %d ", r, g, b);
 		}
 	}
 
