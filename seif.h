@@ -43,11 +43,14 @@ typedef struct {
 	u8 flags;		// SIEF_FLAG_X ored together.	
 	u8 encoding;	// RGBA, RGB, ARGB, etc.
 	SEIF_Meta meta;	// Meta data (signature, etc.).
+	// Chunk Info
+	u32 chunk_count;
+	u32 chunk_size;
 } __attribute((packed)) SEIF_Header;
 
 // Image Chunk Header
 typedef struct {
-	u16 idx;
+	u32 idx;
 } __attribute((packed)) SEIF_ChunkHeader;
 
 // Image Chunk
@@ -64,6 +67,28 @@ typedef struct {
 #define SEIF_ENCODING_RGBA 0x01
 #define SEIF_ENCODING_RGB  0x02
 #define SEIF_ENCODING_ARGB 0x03
+
+// Seif image layout:
+//   [HEADER]:
+//   	- magic: "SEIF"
+//   	- flags
+//   	- encoding
+//   	- [META]:
+//   		- signature: "LEAFSEIF"
+//   	- chunk_count
+//   	- chunk_size
+//   [FIRST CHUNK]
+//   	- [HEADER]:
+//   		- idx: 1
+//   	- [data]
+// 
+// Chunks are layed out like this:
+// 
+// 	 1  |  2  |  3
+//  --------------
+//   4  |  5  |  6
+//  --------------
+//   7  |  8  |  9
 
 
 #endif // __SEIF_H__
