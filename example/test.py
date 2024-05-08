@@ -1,36 +1,51 @@
 import struct
 
-# Seif Flags
-SEIF_FLAG_ALPHA = (1 << 0)
-SEIF_FLAG_META = (1 << 1)
-SEIF_FLAG_COMPRESSED = (1 << 2)
-
-# Seif Encoding
 SEIF_ENCODING_RGBA = 0x01
-SEIF_ENCODING_RGB = 0x02
-SEIF_ENCODING_ARGB = 0x03
+SEIF_FLAG_ALPHA = 1 << 0
+SEIF_FLAG_META = 1 << 1
+SEIF_FLAG_COMPRESSED = 1 << 2
 
-# Generation of SEIF
-SEIF_MAGIC = b"SEIF"
-SEIF_FLAGS  = SEIF_FLAG_ALPHA | SEIF_FLAG_META
-SEIF_ENCODING = SEIF_ENCODING_RGBA
+class SEIF_Meta:
+    def __init__(self):
+        self.signature = b"LEAFSEIF"
+        self.width = 0
+        self.height = 0
 
-LEAF_SEIF_SIGNATURE = b"PY SEIF"
+class SEIF_Header:
+    def __init__(self):
+        self.magic = b"SEIF"
+        self.flags = SEIF_FLAG_ALPHA | SEIF_FLAG_META
+        self.encoding = SEIF_ENCODING_RGBA
+        self.meta = SEIF_Meta()
+        self.chunk_count = 4
+        self.chunk_size = 4 * 4
 
-SEIF_Meta = struct.Struct("<8s")
-SEIF_Header = struct.Struct("<4sBB8s")
+class SEIF_ChunkHeader:
+    def __init__(self, i):
+        self.idx = i 
 
-SEIF_META = SEIF_Meta.pack(
-        LEAF_SEIF_SIGNATURE
-)
+def write_header(file, header):
+    file.write(header.magic)
+    file.write(struct.pack('BB', header.flags, header.encoding))
+    file.write(header.meta.signature)
+    file.write(struct.pack('II', header.meta.width, header.meta.height))
+    file.write(struct.pack('II', header.chunk_count, header.chunk_size))
 
-header_data = SEIF_Header.pack(
-    SEIF_MAGIC,
-    SEIF_FLAGS,
-    SEIF_ENCODING,
-    SEIF_META
-)
+def write_chunk(file, chunk_header):
+    file.write(struct.pack('I', chunk_header.idx))
+    
+    encoding_size = 4   # RGBA
+    for _ in range((4*4) * encoding_size):
+        file.write(struct.pack('B', 255))
 
-with open("out.seif", "wb") as f:
-    f.write(header_data)
+def generate_seif_file(filename):
+    with open(filename, 'wb') as file:
+        header = SEIF_Header()
+        write_header(file, header)
+        
+        for i in range(header.chunk_count):
+            chunk_header = SEIF_ChunkHeader(i + 1)
+            write_chunk(file, chunk_header)
 
+if __name__ == "__main__":
+    generate_seif_file("out.seif")
